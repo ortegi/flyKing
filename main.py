@@ -232,11 +232,11 @@ def getImage(city_origin, city_destiny, price, curr_sign, diff):
   i = Image.open('plantilla.jpg')
   i2 = Image.open('./unsplash_temp.png')
 
-  i2.thumbnail((800, 650))
+  i2.thumbnail((800, 600))
 
   # To add 2D graphics in an image call draw Method
   back_im = i.copy()
-  back_im.paste(i2, (70, 140))
+  back_im.paste(i2, (70, 100))
   Im = ImageDraw.Draw(back_im)
   mf = ImageFont.truetype('font.ttf', 70)
   mx = ImageFont.truetype('jack.ttf', 70)
