@@ -61,19 +61,19 @@ def toDate(date_str):
   return datetime.datetime.strptime(date_str, '%Y-%m-%dT%H:%M:%S.%f%z')
 
 
-def searchFlights(fly_from, fly_to, date_from, date_to, currency):
-
+def searchFlights(fly_from, fly_to, date_from, date_to, currency, delay):
+    
   curr = {
       'EUR': '€',
       'USD': '$'
   }
-
+  
   response = search(fly_from, fly_to, date_from, date_to, currency)
   results = ''
   for option in response.json()['data'][:10]:
     precio = 0
     print("Ida:", option['cityFrom'], '-', option['cityTo'], 'Precio:', option['price'], curr[currency], 'Salida:', option['local_departure'])
-    v = search(option['flyTo'], fly_from, (toDate(option['local_arrival']) + datetime.timedelta(days=7)).strftime("%d/%m/%Y"), (toDate(option['local_arrival']) + datetime.timedelta(days=15)).strftime("%d/%m/%Y"), currency)
+    v = search(option['flyTo'], fly_from, (toDate(option['local_arrival']) + datetime.timedelta(days=delay)).strftime("%d/%m/%Y"), (toDate(option['local_arrival']) + datetime.timedelta(days=delay+3)).strftime("%d/%m/%Y"), currency)
     v = v.json()['data'][0]
     print("Vuelta:", v['cityFrom'], '-', v['cityTo'], 'Precio:', v['price'], curr[currency] , 'Salida:', v['local_departure'])
     precio = option['price'] + v['price']
@@ -90,70 +90,56 @@ def searchFlights(fly_from, fly_to, date_from, date_to, currency):
 
 
 codigos_FROM = [
-    # España
+    #España
     "MAD", "BCN", "VLC", "SVQ", "AGP", "BIO", "PMI", "LPA", "TFS", "TFN", "ALC",
-    # América Latina
-    "CUN", "BOG", "EZE", "GRU", "SCL", "LIM", "UIO", "SJO", "PUJ", "MEX"
+    #LATAM
+     "BOG", "CCS"
 ]
 
+
 codigos_TO = [
-    # Europa
     "LHR", "LGW", "STN", "MAN",   # Reino Unido
-    "CDG", "ORY", "NCE",           # Francia
-    "MAD", "BCN", "AGP",           # España
+    "CDG", "ORY", "NCE",          # Francia
+    "MAD", "BCN", "AGP", "VLC", "SVQ", "BIO", "PMI", "LPA", "TFS", "TFN", "ALC", # España
     "FCO", "MXP", "VCE",           # Italia
-    "FRA", "MUC", "TXL",           # Alemania
+    "FRA", "MUC",                 # Alemania
     "AMS", "RTM",                  # Países Bajos
     "ZRH", "GVA",                  # Suiza
     "LIS", "OPO",                  # Portugal
-    "ATH", "HER",                  # Grecia
-    "IST", "SAW",                  # Turquía
-    "VIE", "SZG",                  # Austria
-    "BRU", "CRL",                  # Bélgica
-    "ARN", "GOT",                  # Suecia
-    "CPH", "AAL",                  # Dinamarca
-    "OSL", "BGO",                  # Noruega
-    "DUB", "SNN",                  # Irlanda
-    "HEL", "RVN",                  # Finlandia
-    "PRG", "BRQ",                  # República Checa
-    # Estados Unidos
+    "ATH",                         # Grecia
+    "IST",                         # Turquía
+    "VIE",                         # Austria
+    "BRU",                         # Bélgica
+    "GOT",                         # Suecia
+    "CPH",                         # Dinamarca
+    "OSL",                         # Noruega
+    "DUB",                         # Irlanda
+    "HEL",                         # Finlandia
+    "PRG",                         # República Checa                  
     "JFK", "LGA",                  # Nueva York
     "LAX",                         # Los Ángeles
-    "MIA",                         # Miami
-    "MCO",                         # Orlando
-    "LAS",                         # Las Vegas
-    "ORD", "MDW",                  # Chicago
-    "SFO",                         # San Francisco
-    "HNL",                         # Honolulu
-    "DCA", "IAD",                  # Washington, D.C.
-    "BOS",                         # Boston
-    "SEA",                         # Seattle
-    "ATL",                         # Atlanta
-    "MSY",                         # Nueva Orleans
-    "DEN",                         # Denver
-    "DFW",                         # Dallas
-    "IAH", "HOU",                  # Houston
-    "PHL"                          # Filadelfia
-]
+    "MIA",                         #MIAMI
+    "BOG",
+    "CCS"
+    
+    ]
 
 
 ciudades_europa = [
-    "LHR", "LGW", "STN", "MAN", "CDG", "ORY", "NCE", "MAD", "BCN", "AGP",
-    "FCO", "MXP", "VCE", "FRA", "MUC", "TXL", "AMS", "RTM", "ZRH", "GVA",
-    "LIS", "OPO", "ATH", "HER", "IST", "SAW", "VIE", "SZG", "BRU", "CRL",
-    "ARN", "GOT", "CPH", "AAL", "OSL", "BGO", "DUB", "SNN", "HEL", "RVN",
-    "PRG", "BRQ", "BUD", "DEB", "MAD", "BCN", "VLC", "SVQ", "AGP", "BIO",
-    "PMI", "LPA", "TFS", "TFN", "ALC"
+    "LHR", "LGW", "STN", "MAN",   
+    "CDG", "ORY", "NCE", "MAD", "BCN", "AGP", "VLC", "SVQ", "BIO", "PMI", "LPA", "TFS", "TFN", "ALC",
+    "FCO", "MXP", "VCE", "FRA", "MUC","AMS", "RTM", "ZRH", "GVA","LIS", "OPO", "ATH", "IST",                         
+    "VIE", "BRU","GOT", "CPH","OSL","DUB","HEL", "PRG","MAD", "BCN", "VLC", "SVQ", "AGP", "BIO", "PMI", "LPA", "TFS", "TFN", "ALC"
 ]
 
 ciudades_latinoamerica = [
-    "CUN", "BOG", "EZE", "GRU", "SCL", "LIM", "UIO", "SJO", "PUJ", "MEX"
+    "CCS", "BOG"
 ]
 
 ciudades_estados_unidos = [
-    "JFK", "LGA", "LAX", "MIA", "MCO", "LAS", "ORD", "MDW", "SFO", "HNL",
-    "DCA", "IAD", "BOS", "SEA", "ATL", "MSY", "SAN", "DEN", "DFW", "PHX",
-    "IAH", "HOU", "PHL"
+    "JFK", "LGA",                  # Nueva York
+    "LAX",                         # Los Ángeles
+    "MIA"
 ]
 
 
@@ -169,7 +155,7 @@ def getContinent(code):
 def getRandomDate():
   today = datetime.datetime.now()
   start_date = today + timedelta(days=40)
-  end_date = start_date + timedelta(days=400)
+  end_date = start_date + timedelta(days=250)
   random_date = start_date + (end_date - start_date) * random.random()
   return random_date
 
@@ -193,40 +179,73 @@ def getDiffBetweenDates(first_date, second_date):
   return abs(difference.days)
 
 
+
+
 def getRandomFlight():
- from_random_num = random.randint(0, len(codigos_FROM) -1)
- to_random_num = random.randint(0, len(codigos_TO) -1)
- from_random = codigos_FROM[from_random_num]
- to_random = codigos_TO[to_random_num]
+ #Get route - origin and destination from list of AIRPORT CODES. 
+ from_random = codigos_FROM[random.randint(0, len(codigos_FROM) - 1)]
+ to_random = codigos_TO[random.randint(0, len(codigos_TO) -1)]
+ while to_random == from_random:
+    to_random = codigos_TO[random.randint(0, len(codigos_TO) -1)]
+    
+ ##get date
  random_date = getRandomDate()
  date_from = random_date.strftime("%d/%m/%Y")
- date_to_raw = ''
+ date_to_raw = random_date + timedelta(days=2)
+ date_to = date_to_raw.strftime("%d/%m/%Y")
+ 
  continent_from = getContinent(from_random)
  continent_to = getContinent(to_random)
- if continent_to != continent_from:
-   date_to_raw = random_date + timedelta(days=15)
+ 
+ ## get duration of trip
+ delay_trip = 0
+ 
+ if continent_from == continent_to:
+     delay_trip = 3
  else:
-  date_to_raw = random_date + timedelta(days=4)
- date_to = date_to_raw.strftime("%d/%m/%Y")
- currency = getCurrency(from_random)
- if from_random != to_random:
-  return searchFlights(from_random, to_random, date_from, date_to, currency)
+     delay_trip = 13
+ 
+
+ #get continent of origin and destination --> so if we get different continets, the trip 
+ #will be longer in days
+ 
+ """
+ if continent_to == continent_from:
+   date_to_raw = random_date + timedelta(days=5)
+ else:
+  date_to_raw = random_date + timedelta(days=14)
+  ##
+  """
+
+ currency = getCurrency(from_random)     #if origin is on LATAM currency is $
+
+ return searchFlights(from_random, to_random, date_from, date_to, currency, delay_trip)  #CALL THE API
   #print(from_random, to_random, date_from, date_to, currency)
 
 
 def getImage(city_origin, city_destiny, price, curr_sign, diff):
+    
+  base_url = 'https://api.unsplash.com/'
+  params = {
+      'query' : city_destiny,
+      'orientation': 'landscape',
+      'client_id': unsplash_key
+  }
+  image = ''
+  image_sub = 'https://unsplash.com/photos/iiqpxCg2GD4/download?ixid=M3w0ODczODh8MHwxfGFsbHx8fHx8fHx8fDE2OTIwMjQ4ODl8'
+  response = requests.get(base_url + 'search/photos',  params=params)
+  json_response = response.json()
+  if len(json_response['results']) >= 1:
+    image = json_response['results'][0]['links']['download']
 
-  images = []
-  # instantiate PyUnsplash object
-  pu = PyUnsplash(api_key=unsplash_key)
-  search = pu.search(type_='photos', query=city_destiny)
-  for photo in search.entries:
-      images.append(photo.link_download)
-
-  if len(images) > 1:
-    response = requests.get(images[0], allow_redirects=True)
-    #print(response.content)
-    open('./unsplash_temp.png', 'wb').write(response.content)
+  
+  response_img = requests.get(image, allow_redirects=True)
+  
+  if response_img.ok:
+    open('./unsplash_temp.png', 'wb').write(response_img.content)
+  else:
+       response_img = requests.get(image_sub, allow_redirects=True)
+       open('./unsplash_temp.png', 'wb').write(response_img.content)
 
   # Open the desired Image you want to add text on
   i = Image.open('plantilla.jpg')
@@ -241,8 +260,8 @@ def getImage(city_origin, city_destiny, price, curr_sign, diff):
   mf = ImageFont.truetype('font.ttf', 70)
   mx = ImageFont.truetype('jack.ttf', 70)
   mz = ImageFont.truetype('jack.ttf', 65)
-
-  # Add Text to an image
+ 
+   # Add Text to an image
   Im.text((100, 700), "{} - {} ".format(city_origin, city_destiny), (80, 81, 79), font=mf)
   Im.text((1250,500), "{} {}".format(price, curr_sign), (255,255,255), font=mf)
   Im.text((1000, 220), '{} días'.format(diff), (80, 81, 79), font=mx)
@@ -252,8 +271,8 @@ def getImage(city_origin, city_destiny, price, curr_sign, diff):
   i.show()
   # Save the image on which we have added the text
   back_im.save("mm.png")
-
-
+  
+  
 def makeTwitterCode():
   flight_data = getRandomFlight()
   #print(flight_data)
@@ -264,7 +283,7 @@ def makeTwitterCode():
   to_flag = flag.flag(flight_data['to_code'])
   #getimage
   getImage(flight_data['from'],flight_data['to'], flight_data['price'], flight_data['curr_sign'], diff)
-  twitt_text = "Vuelo ✈  {} {} - {} {}  \n Del {} al {} \n Por sólo {}{} 💸 \n Resérvalo ahora 😎: {}! \n #{} #{} #vuelos #vuelosbaratos #chollo #oferta #viajeros #flight #cheap #holidays #vacaciones #travel #trip".format(flight_data['from'], from_flag, flight_data['to'], to_flag, first_date, second_date, flight_data['price'], flight_data['curr_sign'], flight_data['link'], flight_data['from'],  flight_data['to'])
+  twitt_text = "Vuelo ✈  {} {} - {} {}  \n Del {} al {} \n Por sólo {}{} 💸 \n Resérvalo ahora 😎: {}! \n #{} #{} #vuelos #vuelosbaratos #chollo #flight #cheap #holidays #vacaciones #travel #trip".format(flight_data['from'], from_flag, flight_data['to'], to_flag, first_date, second_date, flight_data['price'], flight_data['curr_sign'], flight_data['link'], flight_data['from'],  flight_data['to'])
   return twitt_text
 
 
@@ -294,6 +313,6 @@ image_path ='mm.png'
 tweet = makeTwitterCode()
 #print(tweet)
 media = api.simple_upload(image_path)
-client.create_tweet(text=tweet, media_ids=[media.media_id])
+client.create_tweet(text=tweet, media_ids=[media.media_id])  
 
   
