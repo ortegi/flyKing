@@ -4,8 +4,6 @@ import random
 from datetime import timedelta
 import flag
 import tweepy
-import requests
-from pyunsplash import PyUnsplash
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
